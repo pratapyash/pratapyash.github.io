@@ -2,8 +2,8 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #1a1a1a;
+    color: #f0f4f8;
     line-height: 1.6;
 }
 
@@ -14,7 +14,7 @@ body, html {
 }
 
 header {
-    background: #005f73;
+    background: #003844;
     color: #f0f4f8;
     padding: 20px 0;
     text-align: center;
@@ -25,15 +25,15 @@ header h1, header p {
 }
 
 section {
-    background: #fff;
+    background: #2a2a2a;
     margin: 20px 0;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(255,255,255,0.1);
 }
 
 section h2 {
-    color: #333;
+    color: #94d2bd;
 }
 
 ul {
@@ -41,12 +41,141 @@ ul {
 }
 
 a {
-    color: #006fbb;
+    color: #94d2bd;
     text-decoration: none;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+/* Navigation styles */
+#navbar {
+    background-color: #003844;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+#navbar ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+}
+
+#navbar li {
+    margin: 0 15px;
+}
+
+#navbar a {
+    color: #f0f4f8;
+    text-decoration: none;
+    padding: 10px 0;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+#navbar a:hover {
+    color: #94d2bd;
+}
+
+/* Dark mode toggle */
+#darkModeToggle {
+    background: none;
+    border: none;
+    color: #f0f4f8;
+    font-size: 1.2em;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Light mode styles */
+body.light-mode {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+body.light-mode section {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.light-mode #navbar {
+    background-color: #005f73;
+}
+
+body.light-mode section h2 {
+    color: #333;
+}
+
+body.light-mode a {
+    color: #006fbb;
+}
+
+/* Skill bar styles */
+.skill-bar {
+    margin-bottom: 20px;
+}
+
+.skill-name {
+    margin-bottom: 5px;
+}
+
+.skill-progress {
+    background-color: #444;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    background-color: #94d2bd;
+    height: 100%;
+    transition: width 1s ease-in-out;
+}
+
+/* Contact form styles */
+#contactForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#contactForm input,
+#contactForm textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #333;
+    color: #f0f4f8;
+}
+
+#contactForm button {
+    background-color: #94d2bd;
+    color: #1a1a1a;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#contactForm button:hover {
+    background-color: #7ab8a5;
+}
+
+/* Animation classes */
+.fade-in {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -58,4 +187,31 @@ a:hover {
     section {
         margin: 10px 0;
     }
+
+    #navbar ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #navbar li {
+        margin: 10px 0;
+    }
+
+    #darkModeToggle {
+        position: static;
+        margin-top: 10px;
+        transform: none;
+    }
+}
+
+/* Section animation styles */
+.section-hidden {
+    opacity: 0;
+    transform: translateY(8rem);
+}
+
+.section-hidden.animate {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 1s, transform 1s;
 }

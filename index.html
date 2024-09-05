@@ -4,22 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yash Pratap Singh - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <nav id="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#achievements">Achievements</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button id="darkModeToggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
     <header>
         <div class="container">
             <h1>Yash Pratap Singh</h1>
             <p>Electrical Engineering & Computer Science | IIT Kharagpur</p>
         </div>
     </header>
-    <section id="about">
+
+    <section id="about" class="fade-in">
         <div class="container">
             <h2>About Me</h2>
             <p>I'm a Pre-Final Year Undergraduate at IIT Kharagpur, pursuing Electrical Engineering with a minor in Computer Science and a micro in Artificial Intelligence and Applications. Passionate about technology, innovation, and research, I've contributed to various projects and competitions, showcasing my skills in algorithmic trading, quantitative research, and machine learning.</p>
         </div>
     </section>
-    <section id="achievements">
+
+    <section id="achievements" class="fade-in">
         <div class="container">
             <h2>Achievements</h2>
             <ul>
@@ -30,7 +47,8 @@
             </ul>
         </div>
     </section>
-    <section id="experience">
+
+    <section id="experience" class="fade-in">
         <div class="container">
             <h2>Work Experience</h2>
             <p><strong>ZeltaLabs | Algorithmic Trading Strategy Developer</strong><br>Developed a high-performance trading strategy, achieving a Sharpe Ratio of 2.55 and 6000%+ Net returns.</p>
@@ -38,26 +56,56 @@
             <p><strong>Stanford University | Research Intern</strong><br>Evaluated health data using machine learning, achieving significant improvements in data analysis and prediction accuracy.</p>
         </div>
     </section>
-    <section id="projects">
+
+    <section id="projects" class="fade-in">
         <div class="container">
             <h2>Projects</h2>
             <p><strong>ChatGist Transcript Summarizer</strong><br>Developed an NLP model for abstractive summarization of chat-based texts, improving baseline BLEU and ROUGE scores.</p>
             <p><strong>CaptionForge - Image Caption Generator</strong><br>Created a CNN model integrated with LSTMs for generating image captions, utilizing ResNet50 architecture for improved accuracy.</p>
         </div>
     </section>
-    <section id="skills">
+
+    <section id="skills" class="fade-in">
         <div class="container">
             <h2>Technical Skills</h2>
-            <p>Languages: Python, C/C++, MATLAB, HTML, CSS, LaTeX<br>Technologies/Frameworks: TensorFlow/Keras, Flask, Scikit-Learn, Pandas, NumPy, HuggingFace</p>
+            <div class="skill-bar">
+                <div class="skill-name">Python</div>
+                <div class="skill-progress"><div class="progress" style="width: 90%;"></div></div>
+            </div>
+            <div class="skill-bar">
+                <div class="skill-name">C/C++</div>
+                <div class="skill-progress"><div class="progress" style="width: 85%;"></div></div>
+            </div>
+            <div class="skill-bar">
+                <div class="skill-name">MATLAB</div>
+                <div class="skill-progress"><div class="progress" style="width: 80%;"></div></div>
+            </div>
+            <div class="skill-bar">
+                <div class="skill-name">HTML/CSS</div>
+                <div class="skill-progress"><div class="progress" style="width: 75%;"></div></div>
+            </div>
+            <div class="skill-bar">
+                <div class="skill-name">TensorFlow/Keras</div>
+                <div class="skill-progress"><div class="progress" style="width: 85%;"></div></div>
+            </div>
         </div>
     </section>
-    <section id="contact">
+
+    <section id="contact" class="fade-in">
         <div class="container">
             <h2>Contact</h2>
+            <form id="contactForm">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
             <p>Email: <a href="mailto:yashpratap@kgpian.iitkgp.ac.in">yashpratap@kgpian.iitkgp.ac.in</a></p>
             <p>LinkedIn: <a href="https://linkedin.com/in/pratap-yash">pratap-yash</a></p>
         </div>
     </section>
+
     <script src="script.js"></script>
+    <script src="animations.js"></script>
 </body>
 </html>
