@@ -1,24 +1,56 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Tech Stack Item Parallax Effect
+    // Navbar elements and state (moved from script.js)
+    const navbar = document.getElementById('navbar');
+    let lastScrollTop = 0;
+
+    // Utility for debouncing
+    function debounce(func, wait, immediate) {
+        let timeout;
+        return function() {
+            const context = this, args = arguments;
+            const later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    }
+
+    // Tech Stack Item Parallax Effect with requestAnimationFrame
     const techStackItems = document.querySelectorAll('.tech-stack-item');
+    let mouseX = 0, mouseY = 0;
+    let isMouseMoving = false;
 
     if (techStackItems.length > 0) {
         document.addEventListener('mousemove', function(e) {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            techStackItems.forEach(item => {
-                const depth = parseFloat(item.getAttribute('data-depth')) || 0.5;
-                const moveX = (x - 0.5) * depth * 50;
-                const moveY = (y - 0.5) * depth * 50;
-                
-                item.style.transform = `translate(${moveX}px, ${moveY}px)`;
-            });
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!isMouseMoving) {
+                isMouseMoving = true;
+                requestAnimationFrame(updateTechStackParallax);
+            }
         });
     }
 
-    // Add additional animations on scroll
-    function setupScrollAnimations() {
+    function updateTechStackParallax() {
+        isMouseMoving = false;
+        const x = mouseX / window.innerWidth;
+        const y = mouseY / window.innerHeight;
+        
+        techStackItems.forEach(item => {
+            const depth = parseFloat(item.getAttribute('data-depth')) || 0.5;
+            const moveX = (x - 0.5) * depth * 50;
+            const moveY = (y - 0.5) * depth * 50;
+            
+            item.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+    }
+
+    // Add additional animations on scroll (Initial setup, not scroll dependent directly)
+    function setupInitialAnimations() {
         // Hero section elements staggered reveal
         const heroElements = document.querySelectorAll('.hero-content > *');
         let delay = 0;
@@ -52,43 +84,169 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Run animations after initial load
-    setTimeout(setupScrollAnimations, 1800);
+    setTimeout(setupInitialAnimations, 1800);
 
-    // Animate Timeline items
-    function animateTimeline() {
-        const timelineItems = document.querySelectorAll('.timeline-item');
-        const windowHeight = window.innerHeight;
-        
-        timelineItems.forEach((item, index) => {
-            const itemTop = item.getBoundingClientRect().top;
-            
-            if (itemTop < windowHeight * 0.8 && !item.classList.contains('animated')) {
-                setTimeout(() => {
-                    item.classList.add('animated');
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                }, index * 200); // Staggered animation
-                
-                // Add a subtle animation to the dot
-                const dot = item.querySelector('.timeline-dot');
-                if (dot) {
-                    dot.classList.add('pulse');
-                }
+    // --- Functions moved from script.js ---
+    const revealElements = document.querySelectorAll('.reveal-left, .reveal-right, .reveal-item');
+    function checkReveal() {
+        const triggerBottom = window.innerHeight * 0.8;
+        revealElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            if (elementTop < triggerBottom && !element.classList.contains('active')) {
+                element.classList.add('active');
             }
         });
     }
 
-    // Initialize timeline items
+    const countEls = document.querySelectorAll('.count-up');
+    const countedStatus = new Map(); // To track if a counter has finished
+    countEls.forEach(el => countedStatus.set(el, false));
+
+
+    function animateCount(el) {
+        if (countedStatus.get(el)) return; // Skip if already counted
+
+        const target = parseInt(el.getAttribute('data-count'));
+        const duration = 2000; // ms
+        let current = 0;
+        const increment = target / (duration / 16); // Calculate increment per frame (approx 60fps)
+
+        function updateCounter() {
+            current += increment;
+            if (current < target) {
+                el.textContent = Math.floor(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                el.textContent = target;
+                countedStatus.set(el, true); // Mark as counted
+            }
+        }
+        requestAnimationFrame(updateCounter);
+    }
+
+    function checkCountElements() {
+        countEls.forEach(el => {
+            if (!countedStatus.get(el)) { // Only check if not already counted
+                const elTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (elTop < windowHeight * 0.8) {
+                    animateCount(el);
+                }
+            }
+        });
+    }
+    
+    const skillBars = document.querySelectorAll('.skill-progress');
+    const animatedSkillBars = new Set(); // To track skill bars that have been animated
+
+    function animateSkillBars() {
+        skillBars.forEach(bar => {
+            if (animatedSkillBars.has(bar)) return; // Skip if already animated
+
+            const barTop = bar.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+
+            if (barTop < windowHeight * 0.8) {
+                const progress = bar.getAttribute('data-progress') + '%';
+                setTimeout(() => { // Keep small delay for visual staggering if desired
+                    bar.style.width = progress;
+                }, 200);
+                animatedSkillBars.add(bar); // Mark as animated
+            }
+        });
+    }
+    // --- End of functions moved from script.js ---
+
+
+    // Animate Timeline items (modified for consolidated scroll handler)
     const timelineItems = document.querySelectorAll('.timeline-item');
+    // Initialize timeline items
     timelineItems.forEach(item => {
         item.style.opacity = '0';
         item.style.transform = 'translateY(30px)';
         item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     });
 
-    // Listen for scroll to trigger animations
-    window.addEventListener('scroll', animateTimeline);
-    setTimeout(animateTimeline, 1800); // Initial check after load
+    function animateTimeline() {
+        const windowHeight = window.innerHeight;
+        timelineItems.forEach((item, index) => {
+            if (!item.classList.contains('animated')) {
+                const itemTop = item.getBoundingClientRect().top;
+                if (itemTop < windowHeight * 0.8) {
+                    setTimeout(() => {
+                        item.classList.add('animated');
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                        const dot = item.querySelector('.timeline-dot');
+                        if (dot) {
+                            dot.classList.add('pulse');
+                        }
+                    }, index * 100); // Reduced stagger delay slightly
+                }
+            }
+        });
+    }
+    
+    // Parallax for section backgrounds (modified for consolidated scroll handler)
+    const parallaxSections = document.querySelectorAll('.glass-section');
+    function handleSectionParallax() {
+        const scrollPosition = window.scrollY;
+        parallaxSections.forEach(section => {
+            const speed = 0.05; // Keep this value small for subtle effect
+            // Check if section is in viewport to optimize
+            const rect = section.getBoundingClientRect();
+            if (rect.bottom >= 0 && rect.top <= window.innerHeight) {
+                const yPos = -(scrollPosition - section.offsetTop) * speed;
+                section.style.backgroundPosition = `50% ${yPos}px`;
+            }
+        });
+    }
+
+    // Navbar Scroll Effect Logic (moved from script.js)
+    function handleNavbarScroll() {
+        if (!navbar) return; // Exit if navbar element doesn't exist
+
+        const scrollTop = window.scrollY;
+
+        // Style adjustments (padding, shadow)
+        if (scrollTop > 100) {
+            navbar.style.padding = '10px 0';
+            navbar.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            navbar.style.padding = '15px 0';
+            navbar.style.boxShadow = 'none';
+        }
+
+        // Show/hide navbar
+        if (scrollTop > lastScrollTop && scrollTop > 300) { // Scrolling down
+            navbar.style.transform = 'translateY(-100%)';
+        } else { // Scrolling up or at the top
+            navbar.style.transform = 'translateY(0)';
+        }
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+    }
+
+    // Consolidated Scroll Handler
+    function handleScrollAnimations() {
+        // Call all scroll-dependent animation functions
+        handleNavbarScroll(); // Added Navbar scroll logic
+        checkReveal();
+        checkCountElements();
+        animateSkillBars();
+        animateTimeline();
+        handleSectionParallax();
+    }
+
+    // Debounced scroll listener
+    const debouncedScrollHandler = debounce(handleScrollAnimations, 20); // Adjust wait time as needed (16-50ms is common)
+    window.addEventListener('scroll', debouncedScrollHandler);
+
+    // Initial calls for elements potentially in view on load
+    setTimeout(() => {
+        handleScrollAnimations();
+    }, 500); // Delay slightly after other initializations
+
 
     // Add hover animations to project cards
     const projectCards = document.querySelectorAll('.project-card');
@@ -97,86 +255,17 @@ document.addEventListener('DOMContentLoaded', function() {
         card.addEventListener('mouseenter', () => {
             const icon = card.querySelector('.project-icon');
             if (icon) {
-                icon.classList.add('bounce');
+                icon.classList.add('icon-bounce'); // Changed class name
                 setTimeout(() => {
-                    icon.classList.remove('bounce');
+                    icon.classList.remove('icon-bounce'); // Changed class name
                 }, 1000);
             }
         });
     });
 
-    // CSS for the custom animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.7);
-            }
-            70% {
-                transform: scale(1.1);
-                box-shadow: 0 0 0 10px rgba(76, 201, 240, 0);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(76, 201, 240, 0);
-            }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        .pulse-effect {
-            animation: pulse 3s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-20px);
-            }
-            60% {
-                transform: translateY(-10px);
-            }
-        }
-        
-        .bounce {
-            animation: bounce 1s;
-        }
-        
-        .orbit-badge {
-            position: absolute;
-            animation: orbit 10s linear infinite;
-        }
-        
-        @keyframes orbit {
-            from {
-                transform: rotate(0deg) translateX(150px) rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg) translateX(150px) rotate(-360deg);
-            }
-        }
-    `;
-    
-    document.head.appendChild(style);
+    // CSS for custom animations is now in style.css
 
-    // Add parallax effect to sections on scroll
-    window.addEventListener('scroll', function() {
-        const scrollPosition = window.scrollY;
-        
-        // Parallax for section backgrounds
-        document.querySelectorAll('.glass-section').forEach(section => {
-            const speed = 0.05;
-            const yPos = -(scrollPosition - section.offsetTop) * speed;
-            section.style.backgroundPosition = `50% ${yPos}px`;
-        });
-    });
-
-    // Add floating animations to skill cards
+    // Add floating animations to skill cards (Keep as is, not scroll dependent)
     const skillItems = document.querySelectorAll('.skill-item');
     
     skillItems.forEach((item, index) => {
@@ -184,38 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
         item.classList.add('float-animation');
     });
 
-    // Add floating animation CSS
-    const floatStyle = document.createElement('style');
-    floatStyle.textContent = `
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-    `;
-    
-    document.head.appendChild(floatStyle);
-
-    // Add hover effect to navigation links
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            link.querySelector('span').style.color = '#4cc9f0';
-            link.querySelector('span').style.transition = 'color 0.3s ease';
-        });
-        
-        link.addEventListener('mouseleave', () => {
-            link.querySelector('span').style.color = '';
-        });
-    });
+    // Floating animation CSS is now in style.css
 
     // Add ripple effect to buttons
     const buttons = document.querySelectorAll('.glass-btn');
@@ -239,30 +297,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add ripple effect CSS
-    const rippleStyle = document.createElement('style');
-    rippleStyle.textContent = `
-        .glass-btn {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.4);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-        
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    `;
-    
-    document.head.appendChild(rippleStyle);
+    // Ripple effect CSS is now in style.css
 });
