@@ -4,10 +4,10 @@
     --secondary-color: #7209b7;
     --accent-color: #4cc9f0;
     --dark-bg: #1a1a2e;
-    --dark-card: rgba(16, 18, 27, 0.4);
+    --dark-card: rgba(16, 18, 27, 0.55); /* Adjusted opacity */
     --dark-text: #f8f9fa;
     --light-bg: #f0f4f8;
-    --light-card: rgba(255, 255, 255, 0.4);
+    --light-card: rgba(255, 255, 255, 0.55); /* Adjusted opacity */
     --light-text: #222;
     --glass-blur: 10px;
     --glass-border: 1px solid rgba(255, 255, 255, 0.1);
@@ -78,6 +78,49 @@ a:hover {
     z-index: 9999;
 }
 
+/* Hide custom cursor elements when disabled via body class */
+body.custom-cursor-disabled .cursor-dot,
+body.custom-cursor-disabled .cursor-dot-outline {
+    display: none !important;
+}
+
+/* Manage body cursor based on custom cursor state */
+body:not(.custom-cursor-disabled) {
+    cursor: none; /* Hide system cursor when custom is active */
+}
+
+body.custom-cursor-disabled {
+    cursor: auto; /* Show system cursor when custom is disabled */
+}
+
+/* Ensure interactive elements also revert to appropriate system cursors when custom is disabled */
+body.custom-cursor-disabled a,
+body.custom-cursor-disabled button,
+body.custom-cursor-disabled .fab-toggle, /* For FAB itself */
+body.custom-cursor-disabled .fab-item, /* For items in FAB menu */
+body.custom-cursor-disabled .project-link,
+body.custom-cursor-disabled .tilt-card, /* if it's meant to be clickable */
+body.custom-cursor-disabled .cta-button, /* Hero CTA */
+body.custom-cursor-disabled .cta-button-outline, /* Hero CTA */
+body.custom-cursor-disabled .back-to-top, /* Back to top button */
+body.custom-cursor-disabled .theme-toggle, /* Theme toggle button */
+body.custom-cursor-disabled .mobile-menu-toggle /* Mobile menu toggle */
+ {
+    cursor: pointer;
+}
+
+body.custom-cursor-disabled input, /* General inputs */
+body.custom-cursor-disabled textarea {
+    cursor: text;
+}
+/* Ensure specific input types also get pointer if they are more button-like */
+body.custom-cursor-disabled input[type="button"],
+body.custom-cursor-disabled input[type="submit"],
+body.custom-cursor-disabled input[type="reset"] {
+    cursor: pointer;
+}
+
+
 .cursor-dot {
     width: 8px;
     height: 8px;
@@ -146,6 +189,104 @@ a:hover {
         transform: translateY(-20px);
     }
 }
+
+/* === Custom Animations from animations.js === */
+
+/* Pulse Animation (used by timeline dots and avatar) */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.7);
+    }
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(76, 201, 240, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(76, 201, 240, 0);
+    }
+}
+
+.pulse { /* Used by timeline dots */
+    animation: pulse 2s infinite;
+}
+
+.pulse-effect { /* Used by avatar container */
+    animation: pulse 3s infinite; /* Slightly different timing for avatar */
+}
+
+/* Icon Bounce Animation (for project card icons on hover) */
+@keyframes icon-bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-20px);
+    }
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.icon-bounce { /* Class to be added to project icons by JS on hover */
+    animation: icon-bounce 1s;
+}
+
+/* Orbit Animation (for tech badges in hero section) */
+.orbit-badge { /* Individual badges that fly around */
+    position: absolute;
+    /* The JS for setupInitialAnimations sets animation on .orbit (parent)
+       e.g. orbitEl.style.animation = 'orbit-rotation 15s linear infinite';
+       The keyframes @orbit and class .orbit-badge were in the injected CSS.
+       If individual badges have their own animation path different from the parent,
+       this 'animation: orbit 10s linear infinite;' would be applied by JS or CSS.
+       The original injected CSS had:
+       .orbit-badge { position: absolute; animation: orbit 10s linear infinite; }
+       So, including it here.
+    */
+    /* animation: orbit 10s linear infinite; */ /* Commented out as likely unused/conflicting */
+}
+
+/* @keyframes orbit { */ /* For .orbit-badge elements - Commented out as likely unused/conflicting */
+    /* from {
+        transform: rotate(0deg) translateX(150px) rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg) translateX(150px) rotate(-360deg);
+    } */
+/* } */
+
+/* Float Animation (used by skill cards via .float-animation class) */
+/* The @keyframes float is already defined in style.css (used by .tech-stack-item),
+   so we just need the class that uses it. */
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Ripple Effect (for .glass-btn) */
+/* .glass-btn already has position: relative and overflow: hidden from existing rules in style.css */
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4); /* Standard ripple color */
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+body.light-mode .ripple-effect {
+    background-color: rgba(0, 0, 0, 0.1); /* Ripple color for light mode */
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* === End of Custom Animations from animations.js === */
 
 .loading-text {
     color: var(--dark-text);
@@ -626,6 +767,7 @@ body.light-mode .hamburger span {
     flex: 1;
     position: relative;
     height: 400px;
+    overflow: hidden; /* Prevent tech items from peeking out */
 }
 
 .floating-tech-stack {
@@ -692,7 +834,7 @@ body.light-mode .hamburger span {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-20px);
+        transform: translateY(-10px); /* Made float animation more subtle */
     }
 }
 
@@ -893,13 +1035,25 @@ body.light-mode .hamburger span {
 }
 
 .skill-item {
-    padding: 15px;
+    padding: 20px; /* Increased padding */
 }
 
 .skill-info {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start; /* Better alignment for multi-line skill names */
     margin-bottom: 10px;
+}
+
+/* Assumes HTML structure like:
+<div class="skill-info">
+  <span class="skill-name">Very Long Skill Name That Wraps</span>
+  <span class="skill-percentage">80%</span>
+</div>
+*/
+.skill-name { /* Add this class to the span/div holding the skill name text */
+    flex-grow: 1;
+    margin-right: 10px; /* Space before percentage */
 }
 
 .skill-percentage {
@@ -1185,16 +1339,32 @@ body.light-mode .fab-item {
         font-size: 15px;
     }
 
-    .hero-container, 
+    .hero-container,
     .about-content,
     .contact-container {
         flex-direction: column;
     }
 
-    .hero-image, 
+    .hero-image,
     .about-image {
         margin-top: 50px;
     }
+
+    /* Responsive tech stack items in About Me section */
+    .tech-stack-item {
+        font-size: 0.9rem;
+        padding: 8px 15px;
+    }
+    .tech-stack-item:nth-child(5), 
+    .tech-stack-item:nth-child(7) { /* Hide some items */
+        display: none;
+    }
+    .tech-stack-item:nth-child(1) { top: 15%; left: 5%; }
+    .tech-stack-item:nth-child(2) { top: 45%; left: 15%; }
+    .tech-stack-item:nth-child(3) { top: 65%; left: 40%; }
+    .tech-stack-item:nth-child(4) { top: 25%; left: 55%; }
+    .tech-stack-item:nth-child(6) { top: 5%; left: 30%; }
+
 
     .timeline::before {
         left: 30px;
@@ -1256,11 +1426,15 @@ body.light-mode .fab-item {
         left: 0;
         width: 100%;
         height: 100vh;
-        background: var(--dark-card);
+        background: rgba(16, 18, 27, 0.85); /* Increased opacity for dark mode mobile menu */
         backdrop-filter: blur(var(--glass-blur));
         justify-content: center;
         align-items: center;
         z-index: 999;
+    }
+
+    body.light-mode .nav-links.active { /* Added rule for light mode active mobile menu */
+        background: rgba(240, 244, 248, 0.85); /* Increased opacity for light mode mobile menu */
     }
 
     .nav-links.active li {
@@ -1271,8 +1445,27 @@ body.light-mode .fab-item {
         flex-direction: column;
     }
 
+    /* Further adjustments for tech stack on very small screens */
+    @media (max-width: 480px) { /* Combined with existing 480px query later */
+        .tech-stack-item:nth-child(2), 
+        .tech-stack-item:nth-child(4) { /* Hide more items */
+            display: none;
+        }
+        .tech-stack-item:nth-child(1) { top: 20%; left: 10%; font-size: 0.8rem; padding: 6px 10px;}
+        .tech-stack-item:nth-child(3) { top: 55%; left: 30%; font-size: 0.8rem; padding: 6px 10px;}
+        .tech-stack-item:nth-child(6) { top: 35%; left: 60%; font-size: 0.8rem; padding: 6px 10px;}
+
+        .about-image {
+            min-height: 300px; /* Reduce height on very small screens */
+            height: auto;
+       }
+    }
+
     .projects-container {
         grid-template-columns: 1fr;
+        /* For very narrow screens, if global container padding isn't enough: */
+        /* padding-left: 5px; */
+        /* padding-right: 5px; */
     }
 
     .skills-grid {
@@ -1303,9 +1496,11 @@ body.light-mode .fab-item {
     }
 
     .achievement-card,
-    .project-card {
+    .project-card { /* Padding remains 15px as per original specific rule for these cards */
         padding: 15px;
     }
+    /* Note: .skill-item padding was changed to 20px earlier, 
+       .project-card and .achievement-card keep their specific 15px padding from this block */
 
     .contact-card {
         flex-direction: column;
