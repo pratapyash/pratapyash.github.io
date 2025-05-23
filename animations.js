@@ -136,26 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    const skillBars = document.querySelectorAll('.skill-progress');
-    const animatedSkillBars = new Set(); // To track skill bars that have been animated
-
-    function animateSkillBars() {
-        skillBars.forEach(bar => {
-            if (animatedSkillBars.has(bar)) return; // Skip if already animated
-
-            const barTop = bar.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-
-            if (barTop < windowHeight * 0.8) {
-                const progress = bar.getAttribute('data-progress') + '%';
-                setTimeout(() => { // Keep small delay for visual staggering if desired
-                    bar.style.width = progress;
-                }, 200);
-                animatedSkillBars.add(bar); // Mark as animated
-            }
-        });
-    }
     // --- End of functions moved from script.js ---
+    // Skill bar animation logic removed as the section is being deleted.
 
 
     // Animate Timeline items (modified for consolidated scroll handler)
@@ -233,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
         handleNavbarScroll(); // Added Navbar scroll logic
         checkReveal();
         checkCountElements();
-        animateSkillBars();
+        // animateSkillBars(); // Removed call as section is deleted
         animateTimeline();
         handleSectionParallax();
     }
