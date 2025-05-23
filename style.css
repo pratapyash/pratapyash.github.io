@@ -155,13 +155,14 @@ body.custom-cursor-disabled input[type="reset"] {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    gap: 20px; /* Added gap for spacing between circles */
 }
 
 .circle {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    margin: 0 10px;
+    /* margin: 0 10px; */ /* Replaced margin with gap on parent .loader */
     background-color: var(--accent-color);
     animation: bounce 1.5s ease-in-out infinite;
 }
@@ -427,6 +428,11 @@ body.light-mode .glass-btn {
 .nav-link span {
     position: relative;
     z-index: 2;
+    transition: color 0.3s ease; /* Added for smooth color change */
+}
+
+.nav-link:hover span { /* Added to handle hover color via CSS */
+    color: var(--accent-color);
 }
 
 .nav-link::before {
@@ -1015,70 +1021,7 @@ body.light-mode .hamburger span {
     margin-top: 30px;
 }
 
-/* Skills Section */
-.skills-container {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-.skills-category h3 {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    color: var(--accent-color);
-}
-
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.skill-item {
-    padding: 20px; /* Increased padding */
-}
-
-.skill-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Better alignment for multi-line skill names */
-    margin-bottom: 10px;
-}
-
-/* Assumes HTML structure like:
-<div class="skill-info">
-  <span class="skill-name">Very Long Skill Name That Wraps</span>
-  <span class="skill-percentage">80%</span>
-</div>
-*/
-.skill-name { /* Add this class to the span/div holding the skill name text */
-    flex-grow: 1;
-    margin-right: 10px; /* Space before percentage */
-}
-
-.skill-percentage {
-    font-weight: 600;
-    color: var(--accent-color);
-}
-
-.skill-bar {
-    height: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.skill-progress {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-    border-radius: 5px;
-    width: 0;
-    transition: width 1.5s cubic-bezier(0.1, 0.5, 0.2, 1);
-}
-
-body.light-mode .skill-bar {
-    background-color: rgba(0, 0, 0, 0.1);
-}
+/* Skills Section - REMOVED */
 
 /* Contact Section */
 .contact-container {
@@ -1521,7 +1464,7 @@ body.light-mode {
 body.light-mode .section-title,
 body.light-mode .timeline-content h3,
 body.light-mode .project-card h3,
-body.light-mode .skill-name,
+/* body.light-mode .skill-name, */ /* .skill-name was part of the removed Skills section */
 body.light-mode .contact-detail h3 {
     color: var(--light-text);
 }
